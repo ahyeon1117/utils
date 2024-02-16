@@ -1,0 +1,25 @@
+# MSSQL 이미지의 경우 관리자(sa) 계정으로 접근한다.
+# application.yml 또는 application-mssql.yml의 user에 sa 추가
+# application.yml 또는 application-mssql.yml의 passwd에 SA_PASSWORD의 값 추가
+# TSLv1.2 관련 오류 발생 시 application.yml의
+# url 끝에 ;encrypt=false; 추가
+
+version: "3"
+
+services:
+  mssql:
+    container_name: mssql
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    user: root
+    # MSSQL 기본 포트 = 1433
+    ports:
+      - 1432:1433
+    volumes:
+      - "mssql-volume:/var/opt/mssql"
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: dtonic123!
+      # MINPROTOCOL: TLSv1
+
+volumes:
+  mssql-volume:

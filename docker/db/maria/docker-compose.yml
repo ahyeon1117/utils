@@ -1,0 +1,21 @@
+# env의 MARIADB_DATABASE 옵션이 DB를 생성해 주지 않음,
+# 그래서 기본 생성되는  mysql 이라는 이름의 DB로 연결
+
+version: "3"
+
+services:
+  mariadb:
+    container_name: mariadb
+    image: mariadb:latest
+    ports:
+      - 3306:3306
+    volumes:
+      - "mariaDB-volume:/var/lib/mysql"
+    environment:
+      TZ: Asia/Seoul
+      MARIADB_ROOT_PASSWORD: dtonic
+      MARIADB_USER: dtonic
+      MARIADB_PASSWORD: dtonic
+      MARIADB_DATABASE: mysql
+volumes:
+  mariaDB-volume:

@@ -1,0 +1,28 @@
+# 오라클은 SELECT만을 이용한 쿼리는 사용불가
+# 따라서 Mybatis 테스트 시 오라클에서 제공하는 dual 이라는 더미 테이블을 사용하여 쿼리 실행
+# ex) SELECT 1 FROM dual
+
+# 오라클 컨테이너 내부 실행 커맨드 -> sqlplus
+# id = system , pwd = oracle
+# ORACLE 이미지의 경우 system 계정으로 접근한다.
+# application.yml 또는 application-oracle.yml의 user에 system 추가
+# application.yml 또는 application-oracle.yml의 passwd에 oracle 추가
+
+# <계정 추가 및 권한 부여>
+# SELECT * FROM all_users; 로 계정 조회
+# 계정 없을 경우 create user 생성할계정 IDENTIFIED BY 비밀번호;
+# GRANT CONNECT, resource to 생성한 계정; 으로 계정 권한 부여
+# SELECT NAME FROM v$database;  <- 전체 DB 조회
+
+version: "3"
+services:
+  oracle:
+    image: jaspeen/oracle-xe-11g
+    container_name: oracle
+    volumes:
+      - "oracle-volume:/u01/app/oracle"
+    ports:
+      - 1522:1521
+
+volumes:
+  oracle-volume:
