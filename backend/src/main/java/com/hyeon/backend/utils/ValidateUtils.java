@@ -4,15 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Utility for validation
- * @FileName ValidateUtil.java
- * @Project citydatahub_datacore_ui
- * @Brief
- * @Version 1.0
- * @Date 2022. 3. 25.
- * @Author Elvin
- */
 public class ValidateUtils {
 
   /**
