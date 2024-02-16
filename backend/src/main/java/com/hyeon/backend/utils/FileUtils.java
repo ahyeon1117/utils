@@ -14,6 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FileUtils {
 
+  /**
+   * Converts part to file.
+   * @param jakarta.servlet.http.Part	part
+   * @return	java.io.File
+   */
   public File convertPartToFile(Part part) throws IOException {
     OutputStream out = null;
     InputStream filecontent = null;
