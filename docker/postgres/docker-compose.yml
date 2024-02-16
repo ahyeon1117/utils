@@ -1,0 +1,19 @@
+version: "3.1"
+
+services:
+  postgres:
+    image: "postgres:latest"
+    restart: always
+    container_name: toy_postgres
+    hostname: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: post123!
+      POSTGRES_DB: postgres
+    volumes:
+      - toy-volume:/var/lib/postgresql/data
+    ports:
+      - 5431:5432
+
+volumes:
+  toy-volume:
