@@ -1,0 +1,23 @@
+spring:
+  database:
+    datasource:
+      hikari:
+        maximumPoolSize: 5
+        connection-test-query: SELECT 1
+database:
+  url: http://127.0.0.1:5432
+  id: postgres
+  password: post123!
+  databaseIp: localhost
+  databasePort: 5432
+  databaseName: postgres
+  databaseOption:
+  databaseType: POSTGRES
+
+devtools:
+  livereload:
+    enable: true
+  restart:
+    enabled: true
+    poll-interval: 2s
+    quiet-period: 1s

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -12,8 +13,9 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-@Component
 @Slf4j
+@Component
+@EnableScheduling
 public class WebsocketController extends TextWebSocketHandler {
 
   private static List<WebSocketSession> list = new ArrayList<>();
@@ -38,7 +40,7 @@ public class WebsocketController extends TextWebSocketHandler {
   public void afterConnectionEstablished(WebSocketSession session)
     throws Exception {
     list.add(session);
-    log.info(session + " 클라이언트 접속");
+    log.info("{} 클라이언트 접속", list.toString());
   }
 
   /* Client가 접속 해제 시 호출되는 메서드 */
@@ -77,11 +79,4 @@ public class WebsocketController extends TextWebSocketHandler {
 
     }
   }
-  // private static final String FAKE_QUERY = "INVALID QUERY"; // test
-  // private static final String PROMETHEUS_DISK_QUERY =
-  //   "100 - (sum by(mountpoint) (system_filesystem_usage_bytes{instance=\"otel-collector-1:9464\",state=\"free\",mode=\"rw\"} * 100) / sum by(mountpoint) (system_filesystem_usage_bytes{instance=\"otel-collector-1:9464\"}))";
-  // private static final String PROMETHEUS_MEMORY_QUERY =
-  //   "( system_memory_usage_bytes{instance=\"otel-collector-1:9464\",state=\"used\"} / on() sum(system_memory_usage_bytes{instance=\"otel-collector-1:9464\", state!=\"slab_reclaimable\", state!=\"slab_unreclaimable\"}) ) * 100";
-  // private static final String PROMETHEUS_CPU_QUERY =
-  //   "(1.0 - (sum(rate(system_cpu_time_seconds_total{instance=\"otel-collector-1:9464\",state=\"idle\"}[1m])) / on() sum(rate(system_cpu_time_seconds_total{instance=\"otel-collector-1:9464\",state!=\"interrupt\",state!=\"softirq\",state!=\"steal\",state!=\"wait\"}[1m])))) * 100";
 }
