@@ -17,6 +17,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
     // TODO: 필요에 따라 허용할 origin을 지정
-    registry.addHandler(wsController, "/ws/container").setAllowedOrigins("*");
+    registry.addHandler(wsController, "/ws").setAllowedOrigins("*");
   }
 }
