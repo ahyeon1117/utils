@@ -19,7 +19,7 @@ public class DateUtil {
 
   private static final Locale koreanLocale = new Locale("ko");
 
-  public static String convertInstantDate(String input) {
+  public static String converMdEHHmmDate(String input) {
     LocalDateTime dateTime = LocalDateTime.parse(input, yMdHmInputFormatter);
 
     return dateTime.format(MdEHHmm.withLocale(koreanLocale));
@@ -31,7 +31,7 @@ public class DateUtil {
     return now.format(formatter);
   }
 
-  public static String getRmngTime(String startDt, String endDt) {
+  public static String getDifferenceTime(String startDt, String endDt) {
     LocalDateTime startTime = LocalDateTime.parse(startDt, yMdHmInputFormatter);
     LocalDateTime endTime = LocalDateTime.parse(endDt, yMdHmInputFormatter);
 
