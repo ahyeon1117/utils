@@ -9,7 +9,7 @@ public class LoggingUtils {
    * @param com.hyeon.backend.enums.LoggingId	loggingId
    * @return	String uuid
    */
-  public String generateUUID(LoggingId loggingId) {
+  public static String generateUUID(LoggingId loggingId) {
     return loggingId.getValue() + "-" + System.currentTimeMillis();
   }
 }

@@ -19,7 +19,7 @@ public class FileUtils {
    * @param jakarta.servlet.http.Part	part
    * @return	java.io.File
    */
-  public File convertPartToFile(Part part) throws IOException {
+  public static File convertPartToFile(Part part) throws IOException {
     OutputStream out = null;
     InputStream filecontent = null;
 
