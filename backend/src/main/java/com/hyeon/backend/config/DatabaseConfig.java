@@ -36,6 +36,7 @@ public class DatabaseConfig {
   @Bean(name = "databaseDatasource", destroyMethod = "close")
   @ConfigurationProperties("spring.database.datasource.hikari")
   public HikariDataSource databaseDatasource() {
+    log.info("{}", databaseProperties.getDatabaseType());
     DatabaseEnum databaseEnum = DatabaseEnum.valueOf(
       databaseProperties.getDatabaseType()
     );
