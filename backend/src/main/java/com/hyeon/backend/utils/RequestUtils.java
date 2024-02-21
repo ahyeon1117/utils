@@ -13,8 +13,7 @@ public class RequestUtils {
     StringBuilder stringBuilder = new StringBuilder();
     BufferedReader bufferedReader = null;
 
-    try {
-      InputStream inputStream = request.getInputStream();
+    try (InputStream inputStream = request.getInputStream()) {
       if (inputStream != null) {
         bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         char[] charBuffer = new char[128];
@@ -25,14 +24,6 @@ public class RequestUtils {
       }
     } catch (IOException ex) {
       throw ex;
-    } finally {
-      if (bufferedReader != null) {
-        try {
-          bufferedReader.close();
-        } catch (IOException ex) {
-          throw ex;
-        }
-      }
     }
 
     body = stringBuilder.toString();
