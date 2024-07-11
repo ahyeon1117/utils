@@ -9,6 +9,10 @@ import java.io.File;
 
 public class SystemUtils {
 
+  private String terminal;
+  private String executeCommand;
+  private String memoryGetCommand;
+
   public static final String getOSName() {
     return System.getProperty("os.name").toLowerCase();
   }
@@ -79,39 +83,23 @@ public class SystemUtils {
     public long ullAvailExtendedVirtual;
   }
 
-  public String getSysInfo() {
+  public String getSysInfo() throws IOException, InterruptedException {
     String result = "";
     // 메모리 정보 가져오기
-    MemoryStatusEx memoryStatus = new MemoryStatusEx();
-    CLibrary.INSTANCE.GlobalMemoryStatusEx(memoryStatus);
-
-    String totalMemory =
-      "Total Physical Memory: " +
-      memoryStatus.ullTotalPhys /
-      (1024 * 1024) +
-      " MB";
-    String availableMemory =
-      "Available Physical Memory: " +
-      memoryStatus.ullAvailPhys /
-      (1024 * 1024) +
-      " MB";
-    result += String.format("%s \n%s \n", totalMemory, availableMemory);
+    result += getMemInfo();
 
     File[] roots = File.listRoots();
     for (File root : roots) {
-      // 디스크 정보 가져오기
-      File diskPartition = new File("C:"); // 예: C 드라이브
-
       // 총 디스크 용량
-      long totalDiskSpace = diskPartition.getTotalSpace();
+      long totalDiskSpace = root.getTotalSpace();
 
       // 사용 중인 디스크 용량
-      long usableDiskSpace = diskPartition.getUsableSpace();
+      long usableDiskSpace = root.getUsableSpace();
 
       String totalDisk =
         "Total Disk Space: " + totalDiskSpace / (1024 * 1024 * 1024) + " GB";
       String usableDisk =
-        "Usable Disk Space: " + usableDiskSpace / (1024 * 1024 * 1024) + " GB";
+        "Used Disk Space: " + usableDiskSpace / (1024 * 1024 * 1024) + " GB";
       String freeDisk =
         "Free Disk Space: " +
         (totalDiskSpace - usableDiskSpace) /
@@ -119,7 +107,7 @@ public class SystemUtils {
         " GB";
       result +=
         String.format(
-          "%s : { \n %s \n %s \n %s \n}\n",
+          "\n------HDD------ \n%s : { \n %s \n %s \n %s \n}\n------HDD------",
           root.getAbsolutePath(),
           totalDisk,
           freeDisk,
@@ -127,5 +115,72 @@ public class SystemUtils {
         );
     }
     return result;
+  }
+
+  public String getMemInfo() throws IOException, InterruptedException {
+    String os = System.getProperty("os.name").toLowerCase();
+
+    if (os.contains("win")) {
+      terminal = "cmd";
+      executeCommand = "/c";
+      memoryGetCommand =
+        "for /f \"tokens=1,2\" %a in ('wmic OS get FreePhysicalMemory^,TotalVisibleMemorySize ^| findstr /r \"[0-9]\"') do @echo %a %b";
+    } else if (os.contains("linux")) {
+      terminal = "sh";
+      executeCommand = "-c";
+      memoryGetCommand =
+        "export TERM=xterm && top -n1 -b | grep Mem | head -n 1 | awk '{print $6 + $10, $4}'";
+    }
+
+    ProcessBuilder processBuilder = new ProcessBuilder(
+      terminal,
+      executeCommand,
+      memoryGetCommand
+    );
+    processBuilder.redirectErrorStream(true); // 에러 스트림을 표준 출력 스트림으로 리디렉션, 이 설정을 해주어야 에러 발생시 로그로 출력
+    Process process = processBuilder.start();
+    process.waitFor();
+    String memUsageString = new String(
+      readAllBytes(process.getInputStream()),
+      StandardCharsets.UTF_8
+    );
+    List<String> memUsageList = Arrays.asList(memUsageString.split(" "));
+    if (memUsageList.size() >= 2) {
+      Double totalMemorySize = Double.parseDouble(memUsageList.get(1));
+      Double freeMemorySize = Double.parseDouble(memUsageList.get(0));
+      Double memUsage = Double.parseDouble(
+        String.format(
+          "%.3f",
+          (totalMemorySize - freeMemorySize) / totalMemorySize * 100
+        )
+      );
+      if (os.contains("win")) {
+        return String.format(
+          "\n------MEM------\ntotalMemorySize: %f KB\nfreeMemorySize: %f KB\nmemUsage : %f %%\n------MEM------",
+          totalMemorySize,
+          freeMemorySize,
+          memUsage
+        );
+      } else if (os.contains("linux")) {
+        return String.format(
+          "\n------MEM------\ntotalMemorySize: %f KB\nfreeMemorySize: %f KB\nmemUsage : %f %%\n------MEM------",
+          totalMemorySize,
+          freeMemorySize,
+          memUsage
+        );
+      }
+    }
+    return "";
+  }
+
+  public static byte[] readAllBytes(InputStream inputStream)
+    throws IOException {
+    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    byte[] data = new byte[1024];
+    int bytesRead;
+    while ((bytesRead = inputStream.read(data, 0, data.length)) != -1) {
+      buffer.write(data, 0, bytesRead);
+    }
+    return buffer.toByteArray();
   }
 }
